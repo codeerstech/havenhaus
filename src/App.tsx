@@ -8,12 +8,10 @@ import {
   Menu,
   Minus,
   Plus,
-  Search,
   ShoppingBag,
   Star,
   Trash2,
   Truck,
-  User,
   X,
 } from 'lucide-react'
 import { page } from './constants/pages'
@@ -206,12 +204,6 @@ function Header({
         <div className="ml-auto flex items-center gap-2">
           <button className="hidden rounded-[var(--radius-pill)] border border-[var(--color-line)] px-4 py-2 text-sm font-black uppercase md:inline-flex" type="button" onClick={onOpenCountry}>
             United States
-          </button>
-          <button className="hidden h-11 w-11 place-items-center rounded-[var(--radius-control)] border border-[var(--color-line)] sm:grid" type="button" aria-label="Search">
-            <Search size={19} />
-          </button>
-          <button className="hidden h-11 w-11 place-items-center rounded-[var(--radius-control)] border border-[var(--color-line)] md:grid" type="button" aria-label="Account">
-            <User size={19} />
           </button>
           <button className="relative grid h-11 w-11 place-items-center rounded-[var(--radius-control)] border border-[var(--color-line)]" type="button" onClick={onOpenWishlist} aria-label="Open wishlist">
             <Heart size={19} />
@@ -869,12 +861,12 @@ export default function App() {
               <div className="h-full w-full bg-[linear-gradient(135deg,var(--color-dark),var(--color-dark-soft))]" aria-hidden="true" />
             )}
           </div>
-          <div className="relative mx-auto flex min-h-[620px] w-[min(var(--container),calc(100%-32px))] items-end py-16">
+          <div className="relative mx-auto flex min-h-[460px] w-[min(var(--container),calc(100%-32px))] items-center py-10 sm:min-h-[560px] sm:py-14 md:min-h-[620px] md:items-end md:py-16">
             <div className="max-w-3xl">
-              <p className="mb-3 text-xs font-black uppercase tracking-[0.24em] text-[var(--color-accent)]">{page.hero.eyebrow}</p>
-              <h1 className="text-5xl font-black uppercase leading-[0.92] md:text-8xl">{page.hero.title}</h1>
-              <p className="mt-6 max-w-xl text-lg text-white/76 md:text-xl">{page.hero.subtitle}</p>
-              <a className="mt-8 inline-flex rounded-[var(--radius-pill)] bg-[var(--color-accent)] px-6 py-4 text-sm font-black uppercase text-[var(--color-dark)]" href={localHref(page.hero.cta.href)}>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-[var(--color-accent)] sm:tracking-[0.24em]">{page.hero.eyebrow}</p>
+              <h1 className="max-w-[11ch] text-[3rem] font-black uppercase leading-[0.92] sm:text-6xl md:max-w-none md:text-8xl">{page.hero.title}</h1>
+              <p className="mt-5 max-w-xl text-base leading-7 text-white/76 sm:text-lg md:mt-6 md:text-xl">{page.hero.subtitle}</p>
+              <a className="mt-7 inline-flex rounded-[var(--radius-pill)] bg-[var(--color-accent)] px-6 py-4 text-sm font-black uppercase text-[var(--color-dark)] md:mt-8" href={localHref(page.hero.cta.href)}>
                 {page.hero.cta.label}
               </a>
             </div>
@@ -968,12 +960,14 @@ export default function App() {
         </div>
       </footer>
 
-      <div className="fixed bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-[var(--radius-pill)] bg-[var(--color-dark)] px-5 py-3 text-sm font-black uppercase text-white shadow-[var(--shadow-drawer)]">
-        <span>{compared.size} compared</span>
-        <button className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10" type="button" onClick={() => setCompared(new Set())} aria-label="Clear comparison">
-          <Minus size={14} />
-        </button>
-      </div>
+      {compared.size > 0 ? (
+        <div className="fixed bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-[var(--radius-pill)] bg-[var(--color-dark)] px-5 py-3 text-sm font-black uppercase text-white shadow-[var(--shadow-drawer)]">
+          <span>{compared.size} compared</span>
+          <button className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10" type="button" onClick={() => setCompared(new Set())} aria-label="Clear comparison">
+            <Minus size={14} />
+          </button>
+        </div>
+      ) : null}
 
       <CartDrawer
         checkoutComplete={checkoutComplete}
