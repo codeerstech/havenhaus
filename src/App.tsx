@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, MouseEvent } from 'react'
 import {
-  Check,
   ChevronDown,
   CreditCard,
   Heart,
@@ -52,7 +51,7 @@ const staticPages: Record<Exclude<RoutePath, '/'>, StaticPageContent> = {
     sections: [
       {
         title: 'What we do',
-        body: 'Our team curates product collections, keeps shopping paths simple, and helps customers compare options with confidence.',
+        body: 'Our team curates product collections, keeps shopping paths simple, and helps customers choose pieces with confidence.',
       },
       {
         title: 'How we serve customers',
@@ -255,16 +254,12 @@ function CategoryLink({ item }: { item: CategoryCard }) {
 function ProductCardView({
   wished,
   product,
-  compared,
   onAddToCart,
-  onToggleCompare,
   onToggleWishlist,
 }: {
   wished: boolean
   product: ProductCard
-  compared: boolean
   onAddToCart: () => void
-  onToggleCompare: () => void
   onToggleWishlist: () => void
 }) {
   return (
@@ -297,10 +292,6 @@ function ProductCardView({
         <button className="mt-5 flex w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] bg-[var(--color-dark)] px-4 py-3 text-sm font-black uppercase text-white" type="button" onClick={onAddToCart}>
           <ShoppingBag size={17} />
           Add to Cart
-        </button>
-        <button className={`mt-3 flex w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] px-4 py-3 text-sm font-black uppercase ${compared ? 'bg-[var(--color-accent)] text-[var(--color-dark)]' : 'border border-[var(--color-line)] text-[var(--color-heading)]'}`} type="button" onClick={onToggleCompare}>
-          {compared ? <Check size={17} /> : <Plus size={17} />}
-          {compared ? 'Added to Compare' : 'Compare'}
         </button>
       </div>
     </article>
@@ -336,15 +327,11 @@ function SectionIntro({
 
 function ProductRail({
   wishlist,
-  compared,
   onAddToCart,
-  onToggleCompare,
   onToggleWishlist,
 }: {
   wishlist: Set<string>
-  compared: Set<string>
   onAddToCart: (product: ProductCard) => void
-  onToggleCompare: (id: string) => void
   onToggleWishlist: (id: string) => void
 }) {
   const [activeTab, setActiveTab] = useState(page.newSeason.tabs[0]?.label ?? '')
@@ -364,12 +351,10 @@ function ProductRail({
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {active.products.map((product) => (
           <ProductCardView
-            compared={compared.has(product.id)}
             key={product.id}
             product={product}
             wished={wishlist.has(product.id)}
             onAddToCart={() => onAddToCart(product)}
-            onToggleCompare={() => onToggleCompare(product.id)}
             onToggleWishlist={() => onToggleWishlist(product.id)}
           />
         ))}
@@ -737,7 +722,6 @@ export default function App() {
   const [cartOpen, setCartOpen] = useState(false)
   const [wishlistOpen, setWishlistOpen] = useState(false)
   const [countryOpen, setCountryOpen] = useState(false)
-  const [compared, setCompared] = useState<Set<string>>(new Set())
   const [wishlist, setWishlist] = useState<Set<string>>(new Set())
   const [cart, setCart] = useState<CartItem[]>([])
   const [checkoutComplete, setCheckoutComplete] = useState(false)
@@ -773,15 +757,6 @@ export default function App() {
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
   }, [])
-
-  function toggleCompare(id: string) {
-    setCompared((current) => {
-      const next = new Set(current)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
 
   function toggleWishlist(id: string) {
     setWishlist((current) => {
@@ -882,10 +857,8 @@ export default function App() {
         </section>
 
         <ProductRail
-          compared={compared}
           wishlist={wishlist}
           onAddToCart={addToCart}
-          onToggleCompare={toggleCompare}
           onToggleWishlist={toggleWishlist}
         />
 
@@ -898,12 +871,10 @@ export default function App() {
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {page.surfRail.items.map((product) => (
               <ProductCardView
-                compared={compared.has(product.id)}
                 key={product.id}
                 product={product}
                 wished={wishlist.has(product.id)}
                 onAddToCart={() => addToCart(product)}
-                onToggleCompare={() => toggleCompare(product.id)}
                 onToggleWishlist={() => toggleWishlist(product.id)}
               />
             ))}
@@ -959,15 +930,6 @@ export default function App() {
           </div>
         </div>
       </footer>
-
-      {compared.size > 0 ? (
-        <div className="fixed bottom-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-[var(--radius-pill)] bg-[var(--color-dark)] px-5 py-3 text-sm font-black uppercase text-white shadow-[var(--shadow-drawer)]">
-          <span>{compared.size} compared</span>
-          <button className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10" type="button" onClick={() => setCompared(new Set())} aria-label="Clear comparison">
-            <Minus size={14} />
-          </button>
-        </div>
-      ) : null}
 
       <CartDrawer
         checkoutComplete={checkoutComplete}
